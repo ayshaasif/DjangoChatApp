@@ -1,0 +1,16 @@
+{% extends 'chat/lobby.html' %}
+
+{% block content %}
+   <ul>
+    {{user}}
+    {% for obj in objs %}
+     <li><a href="{% url 'chat:get_chatroom' obj.chatUuid %}">
+        {% if obj.user1 != user %}
+            {{ obj.user1 }}
+        {% elif obj.user2 != user %}
+            {{ obj.user2 }}
+        {% endif %}
+    </a></li>
+    {% endfor %}
+   </ul>
+{% endblock %}

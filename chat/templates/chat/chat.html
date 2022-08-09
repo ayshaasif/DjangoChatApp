@@ -1,0 +1,71 @@
+{% extends 'chat/lobby.html' %}
+
+{% block content %}
+
+  <h4>{{obj.chatUuid}}</h4>
+  <h3>In private chat</h3>
+    <p>Send Message to <h1><b>{{personobj.username}}</b></h1></p>
+    
+    <form action = "." method='post'id="form"> 
+      <input type="text" name="message" />
+    </form>
+  <div id = "messages">
+    {% for message in chats %}
+       {% if message.user.id == request.user.id %}
+          <div class="sent">
+            <p class="message">{{message.message}}</p> 
+          </div>
+        {% else%}
+          <div class="received">
+            <p class="message">{{message.message}}</p> 
+          </div>
+        {% endif %}
+    {% endfor %}
+  </div>
+
+  <script type = "text/javascript">
+      let chatUuid = "{{obj.chatUuid}}";
+      let currentuser = "{{request.user.id}}"
+      let url = `ws://${window.location.host}/ws/socket-server/`+chatUuid+`/`;
+      // let url = `ws://${window.location.host}/ws/socket-server/`;
+      
+      console.log("url: ",url);
+      const chatSocket = new WebSocket(url)
+
+      chatSocket.onmessage = function(e){
+          let data = JSON.parse(e.data)
+          console.log('Data: ', data)
+          let sender = data.user_id
+          if(data.type === 'chat'){
+              console.log("In chats")
+              let messages = document.getElementById('messages')
+              console.log("current user: ",currentuser);
+              console.log("sender: ",sender)
+              if( currentuser == sender){
+                  messages.insertAdjacentHTML('beforeend',`
+                <div class="sent">
+                  <p class="message">${data.message}</p> 
+                </div>
+                `)   
+              }else{
+                messages.insertAdjacentHTML('beforeend',`
+              <div class="received">
+                <p class="message">${data.message}</p> 
+              </div>
+              `)
+              }
+          }
+      }
+    
+      let form = document.getElementById('form')
+      form.addEventListener('submit', (e)=>{
+          e.preventDefault()
+          let message = e.target.message.value;
+          chatSocket.send(JSON.stringify({
+              'message':message
+          }))
+          form.reset()
+      })
+    </script>
+
+{% endblock %}

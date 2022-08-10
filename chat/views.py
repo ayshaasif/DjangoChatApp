@@ -61,7 +61,12 @@ def createChatRoom(request, pk, format=None):
         print("New ChatRoom Created")
     # print(chatroom)
         # return redirect(reverse('chat:get_chatroom', kwargs={'chatUuid':chatroomcreated.chatUuid}))    
-        
+        return redirect('/chat/getchatroom/'+chatroomcreated.chatUuid) #this works
+    else:
+        print("check: ",check)
+        chaturl = check.first()
+        print("chatUrl: ",chaturl)
+        return redirect('/chat/getchatroom/'+str(chaturl)) #this works
     return render(request,'chat/list.html',{})
 
 

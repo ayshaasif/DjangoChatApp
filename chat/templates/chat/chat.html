@@ -4,14 +4,14 @@
 
   <h4>{{obj.chatUuid}}</h4>
   <h3>In private chat</h3>
-    <p>Send Message to <h1><b>{{personobj.username}}</b></h1></p>
+    <p>Send Message to <b>{{personobj.username}}</b></p>
     
     <form action = "." method='post'id="form"> 
       <input type="text" name="message" />
     </form>
   <div id = "messages">
     {% for message in chats %}
-       {% if message.user.id == request.user.id %}
+       {% if message.sender.id == request.user.id %}
           <div class="sent">
             <p class="message">{{message.message}}</p> 
           </div>
